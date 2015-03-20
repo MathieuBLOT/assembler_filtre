@@ -1,1 +1,4 @@
 # Assembler
+
+
+Assembler files must have *.asm extension. They are excluded from git in .gitignore :)
