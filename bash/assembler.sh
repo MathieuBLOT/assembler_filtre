@@ -5,6 +5,39 @@ INPUT_FILE=$1
 TMP_FILE=prog.tmp
 OUTPUT_FILE=prog.vhd
 
+# STEP 0bis : Handle imm values properly
+# Imm values are supposed to be given in base 10, prefixed by (-) if they are
+# negative
+function convert_imm() {
+    decimal=$1
+    udecimal=$(echo $decimal | sed 's/-//g')
+    ubinary=$(echo "obase=2;$udecimal" | bc)
+    # Check if the binary number is not too great
+    if [[ "$(echo $ubinary | wc -m)" -gt 9 ]]; then
+        echo "111111111"; # Error value
+    else
+        # Positive number
+        if [[ "$decimal" -eq "$udecimal" ]]; then
+            while [ "$(echo $ubinary | wc -m)" -le 9 ]
+            do
+                ubinary="0${ubinary}"
+            done
+        # Negative number
+        else
+            # One's complement
+            ubinary=$(echo "0${ubinary}" | sed 's/0/X/g' | sed 's/1/0/g' | sed 's/X/1/g')
+            # Two's complement
+            ubinary=$(echo "ibase=2;obase=2;$ubinary+1" | bc)
+            # Sign extension
+            while [ "$(echo $ubinary | wc -m)" -le 9 ]
+            do
+                ubinary="1${ubinary}"
+            done
+        fi
+        echo $ubinary
+    fi
+}
+
 # STEP 1 : Remove comments, empty lines and commas
 # Comments start with ; or # and end with EOL
 function remove_comments() {
@@ -14,6 +47,7 @@ function remove_comments() {
 # STEP 2 : Read temporary file line by line and replace instructions with
 # their binary code
 function generate_binary() {
+    linenb=0
     while read line
     do
         case $(echo ${line^^} | cut -d ' ' -f 1) in
@@ -37,8 +71,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${vhdl_line}; -- ${line}"
-                echo -e "$(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3)&$(echo $vhdl_line | cut -d '&' -f 4); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3)&$(echo $vhdl_line | cut -d '&' -f 4); -- $line"
                 ;;
             # Instructions using 2 registery and then "000"
             INC|DEC|MOVA|NEGA|NOT|SHL1|SHL2|SHL3|SHL4|SHL5|SHL6|SHL7|SHL8|SHL9|SHL10|SHL11|SHL12|SHL13|SHL14|SHL15|SHR1|SHR2|SHR3|SHR4|SHR5|SHR6|SHR7|SHR8|SHR9|SHR10|SHR11|SHR12|SHR13|SHR14|SHR15)
@@ -86,7 +119,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "$(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3) & \"000\"; -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3) & \"000\"; -- $line"
                 ;;
             # Instructions using 1 registery, then 000, then 1 registery
             MOVB|NEGB)
@@ -101,7 +134,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "$(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
                 ;;
             # Instructions BR* an BA*
             BREQ|BRGE|BRLE|BRUMP|BRNE|BRLT|BRGT|BAEQ|BAGE|BALE|BAUMP|BANE|BALT|BAGT)
@@ -128,7 +161,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "$(echo $vhdl_line | cut -d '&' -f 1)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
                 ;;
             # Instructions with 1 registery
             IN|OUT)
@@ -143,13 +176,39 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${vhdl_line} & \"000\" & \"000\"; -- ${line}"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" & \"000\"; -- ${line}"
                 ;;
             RESET)
-                vhdl_line=$(echo -n $line | sed -e 's/ / \& /g' \
-                                                -e 's/RESET/"1111111"/Ig')
-                echo -e "${vhdl_line} & \"111\" & \"111\" & \"111\"; -- ${line}"
+                echo -e "${linenb} => \"1111111\" & \"111\" & \"111\" & \"111\"; -- ${line}"
+                ;;
+            # Instructions with imm
+            BRIEQ|BRIGE|BRILE|BRIUMP|BRINE|BRILT|BRIGT|LI)
+                vhdl_line=$(echo -n $line | sed -e 's/LI [R$]0 /"1100000" /Ig' \
+                                                -e 's/LI [R$]1 /"1100001" /Ig' \
+                                                -e 's/LI [R$]2 /"1100010" /Ig' \
+                                                -e 's/LI [R$]3 /"1100011" /Ig' \
+                                                -e 's/LI [R$]4 /"1100100" /Ig' \
+                                                -e 's/LI [R$]5 /"1100101" /Ig' \
+                                                -e 's/LI [R$]6 /"1100110" /Ig' \
+                                                -e 's/LI [R$]7 /"1100111" /Ig' \
+                                                -e 's/ / \& /g' \
+                                                -e 's/BRIEQ /"1010000" /Ig' \
+                                                -e 's/BRIGE /"1010001" /Ig' \
+                                                -e 's/BRILE /"1010010" /Ig' \
+                                                -e 's/BRIUMP /"1010011" /Ig' \
+                                                -e 's/BRINE /"1010100" /Ig' \
+                                                -e 's/BRILT /"1010101" /Ig' \
+                                                -e 's/BRIGT /"1010110" /Ig' \
+                                                -e 's/ \([-]\?[0-9]\{1,\}\)/ "convert_imm &"/Ig')
+                command=$(echo $vhdl_line | cut -d '&' -f 2 | cut -d '"' -f 2)
+                rescommand=$(eval $command)
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"${rescommand}\"; -- ${line}"
+                ;;
+            *)
+                echo -e "-- Line skipped due to error (unrecognized instruction)"
+                ;;
         esac
+        linenb=$(($linenb + 1))
     done < $TMP_FILE > $OUTPUT_FILE
 }
 
@@ -157,3 +216,5 @@ function generate_binary() {
 remove_comments $INPUT_FILE
 generate_binary
 
+# Delete temporary file
+rm $TMP_FILE

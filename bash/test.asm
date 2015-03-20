@@ -62,3 +62,12 @@ out r1
 lw r1 r2 r3
 sw r1 r2 r3
 reset
+rst
+li r0 0
+li r1 1
+li r2 -1
+li r3 10
+li r4 42
+li r5 -42
+li r6 127
+li r7 -127
