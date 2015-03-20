@@ -32,3 +32,33 @@ shr1 r1 r2
 shr2 r1 r2
 shr3 r1 r2
 shr4 r1 r2
+shr5 r1 r2
+shr6 r1 r2
+shr7 r1 r2
+shr8 r1 r2
+shr9 r1 r2
+shr10 r1 r2
+shr11 r1 r2
+shr12 r1 r2
+shr13 r1 r2
+shr14 r1 r2
+shr15 r1 r2
+breq r1 r2
+brge r1 r2
+brle r1 r2
+brump r1 r2
+brne r1 r2
+brlt r1 r2
+brgt r1 r2
+baeq r1 r2
+bage r1 r2
+bale r1 r2
+baump r1 r2
+bane r1 r2
+balt r1 r2
+bagt r1 r2
+in r1
+out r1
+lw r1 r2 r3
+sw r1 r2 r3
+reset

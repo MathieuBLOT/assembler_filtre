@@ -25,8 +25,8 @@ function generate_binary() {
                                                 -e 's/ADDC /"0000100" /Ig' \
                                                 -e 's/SUBC /"0000101" /Ig' \
                                                 -e 's/AND /"0010000" /Ig' \
-                                                -e 's/OR /"0010001" /Ig' \
                                                 -e 's/XOR /"0010010" /Ig' \
+                                                -e 's/OR /"0010001" /Ig' \
                                                 -e 's/LW /"1011010" /Ig' \
                                                 -e 's/SW /"1011011" /Ig' \
                                                 -e 's/[R$]0/"000"/Ig' \
@@ -101,6 +101,53 @@ function generate_binary() {
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
                 echo -e "$(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                ;;
+            # Instructions BR* an BA*
+            BREQ|BRGE|BRLE|BRUMP|BRNE|BRLT|BRGT|BAEQ|BAGE|BALE|BAUMP|BANE|BALT|BAGT)
+                vhdl_line=$(echo -n $line | sed -e 's/ / \& /g' \
+                                                -e 's/BREQ /"1000000" /Ig' \
+                                                -e 's/BRGE /"1000001" /Ig' \
+                                                -e 's/BRLE /"1000010" /Ig' \
+                                                -e 's/BRUMP /"1000011" /Ig' \
+                                                -e 's/BRNE /"1000100" /Ig' \
+                                                -e 's/BRLT /"1000101" /Ig' \
+                                                -e 's/BRGT /"1000110" /Ig' \
+                                                -e 's/BAEQ /"1001000" /Ig' \
+                                                -e 's/BAGE /"1001001" /Ig' \
+                                                -e 's/BALE /"1001010" /Ig' \
+                                                -e 's/BAUMP /"1001011" /Ig' \
+                                                -e 's/BANE /"1001100" /Ig' \
+                                                -e 's/BALT /"1001101" /Ig' \
+                                                -e 's/BAGT /"1001110" /Ig' \
+                                                -e 's/[R$]0/"000"/Ig' \
+                                                -e 's/[R$]1/"001"/Ig' \
+                                                -e 's/[R$]2/"010"/Ig' \
+                                                -e 's/[R$]3/"011"/Ig' \
+                                                -e 's/[R$]4/"100"/Ig' \
+                                                -e 's/[R$]5/"101"/Ig' \
+                                                -e 's/[R$]6/"110"/Ig' \
+                                                -e 's/[R$]7/"111"/Ig')
+                echo -e "$(echo $vhdl_line | cut -d '&' -f 1)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                ;;
+            # Instructions with 1 registery
+            IN|OUT)
+                vhdl_line=$(echo -n $line | sed -e 's/ / \& /g' \
+                                                -e 's/IN /"1011000" /Ig' \
+                                                -e 's/OUT /"1011001" /Ig' \
+                                                -e 's/[R$]0/"000"/Ig' \
+                                                -e 's/[R$]1/"001"/Ig' \
+                                                -e 's/[R$]2/"010"/Ig' \
+                                                -e 's/[R$]3/"011"/Ig' \
+                                                -e 's/[R$]4/"100"/Ig' \
+                                                -e 's/[R$]5/"101"/Ig' \
+                                                -e 's/[R$]6/"110"/Ig' \
+                                                -e 's/[R$]7/"111"/Ig')
+                echo -e "${vhdl_line} & \"000\" & \"000\"; -- ${line}"
+                ;;
+            RESET)
+                vhdl_line=$(echo -n $line | sed -e 's/ / \& /g' \
+                                                -e 's/RESET/"1111111"/Ig')
+                echo -e "${vhdl_line} & \"111\" & \"111\" & \"111\"; -- ${line}"
         esac
     done < $TMP_FILE > $OUTPUT_FILE
 }
