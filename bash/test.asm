@@ -1,6 +1,6 @@
 ; Fichier assembleur de test, pour l'implémentation BASH
 add r1, r2, r3
-SUB r1 r2 r3
+SUB r1,r2,r3
 INC r1 r2
 dec R1 R2
 addc r1 r2 r3
