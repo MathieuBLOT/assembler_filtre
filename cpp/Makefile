@@ -1,14 +1,21 @@
+CC = g++
+
 CXXFLAGS = -g -O2
+LXXDFLAGS =
 
-EXE = assembler
+EXEC = assembler
 
-assembler : assembler.o
-	g++ $^ -o $@ && rm $^
+assembler : assembler.o parser.o compiler.o
+	${CC} $^ -o $@ && rm $^
 	@clear
-	@echo "The file generated is : \"${EXE}\""
+	@echo "The file generated is : \"${EXEC}\""
 
-$%.o : %.cpp
-	g++ -c $< -o $@ $(CXXFLAGS)
+assembler.o : parser.h compiler.h
+
+parser.o : compiler.h
+
+%.o : %.cpp
+	${CC} -c $< -o $@ $(CXXFLAGS)
 
 clean :
-	rm *.o
+	rm -f *.o ${EXEC}
