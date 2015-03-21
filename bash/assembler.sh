@@ -176,7 +176,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" & \"000\",    -- ${line}"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2) & \"000\" & \"000\",    -- ${line}"
                 ;;
             RESET)
                 echo -e "${linenb} => \"1111111\" & \"111\" & \"111\" & \"111\"; -- ${line}"
