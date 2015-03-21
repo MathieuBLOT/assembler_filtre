@@ -1,3 +1,7 @@
 *.asm
 .*
 *.vhd
+*.o
+
+./cpp/assembleur
+
