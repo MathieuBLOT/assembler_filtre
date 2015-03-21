@@ -3,5 +3,5 @@
 *.vhd
 *.o
 
-./cpp/assembleur
+./cpp/assembler
 
