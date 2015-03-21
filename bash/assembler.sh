@@ -71,7 +71,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3)&$(echo $vhdl_line | cut -d '&' -f 4); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3)&$(echo $vhdl_line | cut -d '&' -f 4),    -- $line"
                 ;;
             # Instructions using 2 registery and then "000"
             INC|DEC|MOVA|NEGA|NOT|SHL1|SHL2|SHL3|SHL4|SHL5|SHL6|SHL7|SHL8|SHL9|SHL10|SHL11|SHL12|SHL13|SHL14|SHL15|SHR1|SHR2|SHR3|SHR4|SHR5|SHR6|SHR7|SHR8|SHR9|SHR10|SHR11|SHR12|SHR13|SHR14|SHR15)
@@ -119,7 +119,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3) & \"000\"; -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3) & \"000\",    -- $line"
                 ;;
             # Instructions using 1 registery, then 000, then 1 registery
             MOVB|NEGB)
@@ -134,7 +134,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 3),    -- $line"
                 ;;
             # Instructions BR* an BA*
             BREQ|BRGE|BRLE|BRUMP|BRNE|BRLT|BRGT|BAEQ|BAGE|BALE|BAUMP|BANE|BALT|BAGT)
@@ -161,7 +161,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3); -- $line"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"000\" &$(echo $vhdl_line | cut -d '&' -f 2)&$(echo $vhdl_line | cut -d '&' -f 3),    -- $line"
                 ;;
             # Instructions with 1 registery
             IN|OUT)
@@ -176,7 +176,7 @@ function generate_binary() {
                                                 -e 's/[R$]5/"101"/Ig' \
                                                 -e 's/[R$]6/"110"/Ig' \
                                                 -e 's/[R$]7/"111"/Ig')
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" & \"000\"; -- ${line}"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2)& \"000\" & \"000\",    -- ${line}"
                 ;;
             RESET)
                 echo -e "${linenb} => \"1111111\" & \"111\" & \"111\" & \"111\"; -- ${line}"
@@ -202,7 +202,7 @@ function generate_binary() {
                                                 -e 's/ \([-]\?[0-9]\{1,\}\)/ "convert_imm &"/Ig')
                 command=$(echo $vhdl_line | cut -d '&' -f 2 | cut -d '"' -f 2)
                 rescommand=$(eval $command)
-                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"${rescommand}\"; -- ${line}"
+                echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"${rescommand}\",    -- ${line}"
                 ;;
             *)
                 echo -e "-- Line skipped due to error (unrecognized instruction)"
