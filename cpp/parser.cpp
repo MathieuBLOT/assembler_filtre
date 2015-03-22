@@ -40,7 +40,6 @@ int split_string_instruction(string &toSplit, string &instruction,
 	if (it == instruction_set->end()) {
 		return 127;
 	}
-	// instruction = it->first;
 	int number_of_operands = it->second.second;
 
 	*operands = get_operands(toSplit, number_of_operands);
@@ -51,6 +50,7 @@ int split_string_instruction(string &toSplit, string &instruction,
 deque<string> get_operands(string &operandsInString, int number_of_operands){
 	string operandsArray[number_of_operands];
 	deque<string> operandsQueue;
+	int number_of_found_operands(0);
 	int i(0);
 
 	replace(operandsInString.begin(), operandsInString.end(), ',', ' ');
@@ -60,8 +60,9 @@ deque<string> get_operands(string &operandsInString, int number_of_operands){
 		operandsStream >> operandsArray[i];
 		operandToBinary(operandsArray[i]);
 		i++;
+		number_of_found_operands++;
 	}
-	for (i = 0; i < number_of_operands; i++) {
+	for (i = 0; i < number_of_found_operands; i++) {
 		operandsQueue.push_back(operandsArray[i]);
 	}
 

@@ -52,11 +52,35 @@ int main(int argc, char* argv[]){
 		output_file.open(OUTPUT_FILE, ios::out);
 		if (output_file) {
 			int instruction_number(0);
+			map<string, int> labels;
+
+			while ( getline(input_file, line) ) {
+				if (!line.empty()) {
+					line = trim(line);
+					trim_comment(line);
+					if (!line.empty()) {
+
+						if (line[line.length() - 1] == ':') {
+							labels[line.substr(0, line.length() -1)] = instruction_number;
+							cout << line.substr(0, line.length() -1);
+							cout << " at line : " << instruction_number << endl;
+						} else {
+							instruction_number++;
+						}
+					}
+				}
+			}
+
+			instruction_number = 0;
+			input_file.clear();
+			input_file.seekg(0, ios::beg);
+
 			while ( getline(input_file, line) ) {
 				string original_instruction;
 				string instruction;
 				string comment;
 				deque<string> operands;
+				int offset(0);
 				int error(0);
 
 				i++;
@@ -64,20 +88,52 @@ int main(int argc, char* argv[]){
 					line = trim(line);
 					comment = trim_comment(line);
 					original_instruction = line;
+					if (line[line.length() - 1] == ':') {
+						comment = "-- " + line + comment;
+						line = "";
+					}
 					if (!line.empty()) {
+						string branch = line.substr(0, 3);
+						transform(branch.begin(), branch.end(), branch.begin(),
+								  ::toupper);
+						if (branch == "BRI") {
+							int space_pos = line.find_first_of(" ");
+							string immediate = line.substr(space_pos + 1,
+														   line.length() - space_pos);
+							cout << immediate << endl;
+							map<string, int>::iterator it;
+
+							it = labels.find(immediate);
+							if (it == labels.end()) {
+								cerr << "Unknown label at line : ";
+								cerr << i << endl;
+								#if STOP_AT_FIRST_ERROR != 0
+								return ERROR_UNKNOWN_LABEL;
+								#endif
+							} else {
+								// Replace Immediate with:
+								offset = (it->second) - instruction_number;
+								ostringstream conversionStream;
+								conversionStream << offset;
+								line.replace(space_pos + 1, line.length() - space_pos,
+											 conversionStream.str());
+							}
+						}
+
 						error = split_string_instruction(line, instruction,
 														&instruction_set, &operands);
 
 						if (error) {
 							output_file << "-- Line skipped due to error";
-							output_file << " (unrecognized instruction)";
 							if (error == 127) {
+								output_file << " (unrecognized instruction)";
 								cerr << "Unknown instruction at line : ";
 								cerr << i << endl;
 #if STOP_AT_FIRST_ERROR != 0
 								return ERROR_UNKNOWN_INSTRUCTION;
 #endif
 							} else {
+								output_file << " (wrong number of operands)";
 								cerr << "[ ERROR ] There is a mistake in";
 								cerr << " the number of operands at line : ";
 								cerr << i << endl;
