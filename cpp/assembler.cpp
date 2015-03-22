@@ -62,8 +62,6 @@ int main(int argc, char* argv[]){
 
 						if (line[line.length() - 1] == ':') {
 							labels[line.substr(0, line.length() -1)] = instruction_number;
-							cout << line.substr(0, line.length() -1);
-							cout << " at line : " << instruction_number << endl;
 						} else {
 							instruction_number++;
 						}
@@ -100,7 +98,6 @@ int main(int argc, char* argv[]){
 							int space_pos = line.find_first_of(" ");
 							string immediate = line.substr(space_pos + 1,
 														   line.length() - space_pos);
-							cout << immediate << endl;
 							map<string, int>::iterator it;
 
 							it = labels.find(immediate);
@@ -167,6 +164,10 @@ int main(int argc, char* argv[]){
 		cerr << "[ ERROR ] File " << argv[1] << " could not be opened" << endl;
 		return ERROR_OPEN_INPUT;
 	}
+
+	cout << "[ SUCCESS ] The resulting file is : \"";
+	cout << OUTPUT_FILE;
+	cout << "\"" << endl;
 
 	return EXIT_SUCCESS;
 }

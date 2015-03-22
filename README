@@ -10,7 +10,7 @@ you should have written "SHL3 R7, R7"
 The generated code will be in the file "prog.vhd"
 
 
-CPP :
+CPP : Label friendly
 	* Compile sources with "make" into the executable "assembler"
 	* Type "./assembler <path/to/your/code>"
   N.B: 'LI' instructions can be written "LI Rn, Imm" or "LIn Imm" :D

@@ -1,14 +1,6 @@
 #ifndef ASSEMBLER_H
 #define ASSEMBLER_H
 
-// #include <iostream>
-// #include <fstream>
-// #include <string>
-// #include <sstream>
-// #include <map>
-// #include <deque>
-// #include <algorithm>
-// #include <bitset>
 #include "compiler.h"
 #include "parser.h"
 
