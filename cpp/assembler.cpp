@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 
 							it = labels.find(immediate);
 							if (it == labels.end()) {
-								cerr << "Unknown label at line : ";
+								cerr << "[ ERROR ] Unknown label at line : ";
 								cerr << i << endl;
 								#if STOP_AT_FIRST_ERROR != 0
 								return ERROR_UNKNOWN_LABEL;
