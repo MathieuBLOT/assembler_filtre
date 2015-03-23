@@ -3,7 +3,7 @@
 # STEP 0 : Script variables
 INPUT_FILE=$1
 TMP_FILE=$(mktemp)
-OUTPUT_FILE=prog.vhd
+OUTPUT_FILE=/dev/stdout
 
 # STEP 0bis : Handle imm values properly
 # Imm values are supposed to be given in base 10, prefixed by (-) if they are
@@ -42,7 +42,7 @@ function convert_imm() {
 # STEP 1 : Remove comments, empty lines and commas
 # Comments start with ; or # and end with EOL
 function remove_comments() {
-    grep -v '^;\|^#' $INPUT_FILE | sed -e '/^[ \t]*$/d' -e 's/\(.*\)[;#].*/\1/g' -e 's/, / /g' -e 's/,/ /g' > $TMP_FILE
+    cat $INPUT_FILE | sed -e '/^[ \t]*$/d' -e 's/\(.*\)[;#]\(.*\)/\1 -- \2 /g' -e 's/, / /g' -e 's/,/ /g' > $TMP_FILE
 }
 
 # STEP 2 : Read temporary file line by line and replace instructions with
@@ -206,7 +206,7 @@ function generate_binary() {
                 echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"${rescommand}\",    -- ${line}"
                 ;;
             *)
-                echo -e "-- Line skipped due to error (unrecognized instruction)"
+                echo -e "-- Line skipped due to error (unrecognized instruction) $line"
                 ;;
         esac
         linenb=$(($linenb + 1))
