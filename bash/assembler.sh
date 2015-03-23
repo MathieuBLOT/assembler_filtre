@@ -204,9 +204,6 @@ function generate_binary() {
                 rescommand=$(eval $command)
                 echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)& \"${rescommand}\",    -- ${line}"
                 ;;
-            ;|#)
-                echo -e "-- COMMENT LINE: $line"
-                ;;
             *)
                 echo -e "-- Line skipped due to error (unrecognized instruction)"
                 ;;
