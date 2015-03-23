@@ -108,12 +108,14 @@ int main(int argc, char* argv[]){
 								return ERROR_UNKNOWN_LABEL;
 								#endif
 							} else {
-								// Replace Immediate with:
-								offset = (it->second) - instruction_number - 1;
-								ostringstream conversionStream;
-								conversionStream << offset;
-								line.replace(space_pos + 1, line.length() - space_pos,
-											 conversionStream.str());
+								if (!isdigit(immediate[0])) {
+								// Replace Immediate in the case it is not a digit
+									offset = (it->second) - instruction_number - 1;
+									ostringstream conversionStream;
+									conversionStream << offset;
+									line.replace(space_pos + 1, line.length() - space_pos,
+												conversionStream.str());
+								}
 							}
 						}
 
