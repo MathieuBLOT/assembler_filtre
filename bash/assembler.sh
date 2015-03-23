@@ -179,7 +179,7 @@ function generate_binary() {
                 echo -e "${linenb} => $(echo $vhdl_line | cut -d '&' -f 1)&$(echo $vhdl_line | cut -d '&' -f 2) & \"000\" & \"000\",    -- ${line}"
                 ;;
             RESET)
-                echo -e "${linenb} => \"1111111\" & \"111\" & \"111\" & \"111\"; -- ${line}"
+                echo -e "${linenb} => \"1111111\" & \"111\" & \"111\" & \"111\", -- ${line}"
                 ;;
             # Instructions with imm
             BRIEQ|BRIGE|BRILE|BRIUMP|BRINE|BRILT|BRIGT|LI)
