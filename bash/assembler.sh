@@ -107,6 +107,7 @@ function generate_binary() {
                                                 -e 's/SHL13 /"0101100" /Ig' \
                                                 -e 's/SHL14 /"0101101" /Ig' \
                                                 -e 's/SHL15 /"0101110" /Ig' \
+                                                -e 's/SHL16 /"0101111" /Ig' \
                                                 -e 's/SHR1 /"0110000" /Ig' \
                                                 -e 's/SHR2 /"0110001" /Ig' \
                                                 -e 's/SHR3 /"0110010" /Ig' \
@@ -122,6 +123,7 @@ function generate_binary() {
                                                 -e 's/SHR13 /"0111100" /Ig' \
                                                 -e 's/SHR14 /"0111101" /Ig' \
                                                 -e 's/SHR15 /"0111110" /Ig' \
+                                                -e 's/SHR16 /"0111111" /Ig' \
                                                 -e 's/[R$]0/"000"/Ig' \
                                                 -e 's/[R$]1/"001"/Ig' \
                                                 -e 's/[R$]2/"010"/Ig' \
