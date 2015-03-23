@@ -52,7 +52,7 @@ function convert_imm() {
 # STEP 1 : Remove comments, empty lines and commas
 # Comments start with ; or # and end with EOL
 function remove_comments() {
-    cat $1 | sed -e '/^[ \t]*$/d' -e 's/\(.*\)[;#]\(.*\)/\1 -- \2 /g' -e 's/, / /g' -e 's/,/ /g' > $TMP_FILE
+    grep '^;\|;#' $INPUT_FILE | sed -e '/^[ \t]*$/d' -e 's/\(.*\)[;#]\(.*\)/\1/g' -e 's/, / /g' -e 's/,/ /g' > $TMP_FILE
 }
 
 # STEP 2 : Read temporary file line by line and replace instructions with
