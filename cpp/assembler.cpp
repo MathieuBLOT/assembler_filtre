@@ -109,7 +109,7 @@ int main(int argc, char* argv[]){
 								#endif
 							} else {
 								// Replace Immediate with:
-								offset = (it->second) - instruction_number;
+								offset = (it->second) - instruction_number - 1;
 								ostringstream conversionStream;
 								conversionStream << offset;
 								line.replace(space_pos + 1, line.length() - space_pos,
