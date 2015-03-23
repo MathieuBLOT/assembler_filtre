@@ -217,6 +217,7 @@ function generate_binary() {
                 ;;
             *)
                 echo -e "-- Line skipped due to error (unrecognized instruction) $line"
+                linenb=$(($linenb - 1)) # On ne compte pas les lignes ignorées
                 ;;
         esac
         linenb=$(($linenb + 1))

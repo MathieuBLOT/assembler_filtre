@@ -1,4 +1,9 @@
 ; Fichier assembleur de test, pour l'implémentation BASH
+; commentaire ligne 2
+; commentaire ligne 3
+; commentaire ligne 4
+
+; la ligne précédante était vide
 add r1, r2, r3 ; commentaire
 SUB r1,r2,r3
 INC r1 r2
