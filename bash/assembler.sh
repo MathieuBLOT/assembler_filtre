@@ -1,9 +1,19 @@
 #!/bin/bash
 
 # STEP 0 : Script variables
-INPUT_FILE=/dev/stdin
+if [ $# -ge 1 ]; then
+    INPUT_FILE="$1"
+else
+    INPUT_FILE=/dev/stdin
+fi
+
 TMP_FILE=$(mktemp)
-OUTPUT_FILE=/dev/stdout
+
+if [ $# -ge 2 ]; then
+    OUTPUT_FILE="$2"
+else
+    OUTPUT_FILE=/dev/stdout
+fi
 
 # STEP 0bis : Handle imm values properly
 # Imm values are supposed to be given in base 10, prefixed by (-) if they are
