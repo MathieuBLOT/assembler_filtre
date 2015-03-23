@@ -2,7 +2,7 @@
 
 # STEP 0 : Script variables
 INPUT_FILE=$1
-TMP_FILE=prog.tmp
+TMP_FILE=$(mktemp)
 OUTPUT_FILE=prog.vhd
 
 # STEP 0bis : Handle imm values properly
@@ -12,9 +12,10 @@ function convert_imm() {
     decimal=$1
     udecimal=$(echo $decimal | sed 's/-//g')
     ubinary=$(echo "obase=2;$udecimal" | bc)
-    # Check if the binary number is not too great
+    # Check if the binary number is not too big
     if [[ "$(echo $ubinary | wc -m)" -gt 9 ]]; then
         echo "111111111"; # Error value
+        echo "binary number too big" >/dev/stderr
     else
         # Positive number
         if [[ "$decimal" -eq "$udecimal" ]]; then
