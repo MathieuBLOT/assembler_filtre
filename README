@@ -1,29 +1,36 @@
 # Assembler
 
-Assembler files should have *.asm extension. Hexadecimal and binary values
-are NOT supported for immediate values.
+Assembler files should have *.asm extension.
+
+Hexadecimal and binary values are NOT supported for immediate values. Be careful
+when using BR* instructions, as they imply that the PC register is incremented
+BEFORE the immediate is applied to it :
+	PC <- PC + 1 + imm
+This is due to the architecture of the microcontroller, not to these programs.
 
 The Shift instructions ('SHL' and 'SHR') must have a number appended to them :
 to shift 3 times to the left the content of 'R7' into 'R7', you should have written
 	SHL3 R7, R7
 
-The generated code will be redirected to stdout if you are using the bash
-implementation, unless you specify a ouput file (see below). For the C++,
-the generated code will be in "prog.vhd".
-Then, all that you have to do is to copy/paste the output into vhd/uC/rom.vhd !
-
 Two implementations are proposed, respectively in the subdirectories bash/ and cpp/.
 Both programs have been tested, but are given "as-it". Please report us any bug or
 error you could find!
 
-CPP : Label friendly
-	* Compile sources with "make" into the executable "assembler"
-	* Type "./assembler <input_file>"
-	* Output is "prog.vhd"
-  N.B: 'LI' instructions can be written "LI Rn, Imm" or "LIn Imm" :D
+The generated code will be redirected to stdout if you are using the bash
+implementation, unless you specify an ouput file (see below). For the C++,
+the generated code will be saved in "prog.vhd".
+Then, all that you have to do is to copy/paste the output into vhd/uC/rom.vhd !
 
 Bash :
 	* Make sure you have permission to execute "./assembler.sh"
 	  You can do that with the command "chmod +x assembler.sh"
 	* Type "./assembler.sh <input_file> <output_file>"
+	
+C++ : Label friendly
+	* Compile sources with "make" into the executable "assembler"
+	* Type "./assembler <input_file>"
+	* Output is "prog.vhd"
+  N.B: 'LI' instructions can be written "LI Rn, Imm" or "LIn Imm" :D
+
+
 
